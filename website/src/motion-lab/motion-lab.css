@@ -1,0 +1,375 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+html[data-page='motion-lab'],
+html[data-page='motion-lab'] body {
+  overflow-x: hidden;
+  background: #0c0d0f;
+}
+
+.motion-lab,
+.motion-lab-fallback {
+  min-height: 1800svh;
+  background: #0c0d0f;
+  color: #f0eee9;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.motion-lab__stage-shell {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #0c0d0f;
+}
+
+.motion-lab--embedded {
+  position: relative;
+  width: 100%;
+}
+
+.motion-lab--embedded .motion-lab__stage-shell {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100svh;
+}
+
+.motion-lab__canvas,
+.motion-lab__canvas canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  opacity: 1 !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+}
+
+.motion-lab__chapters {
+  position: absolute;
+  top: clamp(2.25rem, 5.5vh, 4rem);
+  left: clamp(1.5rem, 4vw, 4.5rem);
+  z-index: 3;
+  width: min(36rem, 43vw);
+  color: #f4f0e8;
+  pointer-events: none;
+}
+
+.motion-lab__chapter {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(10px);
+  will-change: auto;
+}
+
+.motion-lab__chapter-number,
+.motion-lab__chapter h1,
+.motion-lab__chapter p,
+.motion-lab__chapter small {
+  will-change: auto;
+}
+
+.motion-lab__chapter-number,
+.motion-lab__chapter h1,
+.motion-lab__chapter small {
+  font-family: 'VT323', monospace;
+  font-weight: 400;
+}
+
+.motion-lab__chapter-number {
+  display: block;
+  margin-bottom: 0.15rem;
+  color: rgba(223, 231, 237, 0.68);
+  font-size: clamp(1.05rem, 1.35vw, 1.3rem);
+  letter-spacing: 0.08em;
+}
+
+.motion-lab__chapter h1 {
+  margin: 0;
+  font-size: clamp(1.85rem, 2.65vw, 2.55rem);
+  letter-spacing: 0.035em;
+  line-height: 0.95;
+}
+
+.motion-lab__chapter p {
+  max-width: 42ch;
+  margin: 0.8rem 0 0;
+  color: rgba(240, 238, 233, 0.86);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: clamp(1.08rem, 1.28vw, 1.24rem);
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  line-height: 1.52;
+}
+
+.motion-lab__chapter[data-motion-chapter='clean'],
+.motion-lab__chapter[data-motion-chapter='training'] {
+  width: min(36rem, 43vw);
+}
+
+.motion-lab__chapter[data-motion-chapter='clean'] p,
+.motion-lab__chapter[data-motion-chapter='training'] p {
+  max-width: 40ch;
+  font-size: clamp(1.2rem, 1.48vw, 1.42rem);
+  line-height: 1.5;
+}
+
+.motion-lab__chapter small {
+  display: block;
+  margin-top: 0.6rem;
+  color: #dbe9f3;
+  font-size: clamp(1rem, 1.25vw, 1.2rem);
+  letter-spacing: 0.045em;
+}
+
+.motion-lab__temporary-text {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  color: rgba(214, 225, 232, 0.88);
+  font-family: 'VT323', monospace;
+  font-size: clamp(1rem, 1.45vw, 1.35rem);
+  letter-spacing: 0.055em;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.motion-lab__temporary-text [data-motion-temporary] {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  will-change: auto;
+}
+
+.motion-lab__process-terms {
+  position: absolute;
+  top: clamp(15.5rem, 29vh, 18.5rem);
+  left: clamp(1.5rem, 4vw, 4.5rem);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem 1.35rem;
+  width: min(24rem, 29vw);
+  color: rgba(224, 234, 241, 0.94);
+  font-size: clamp(1.25rem, 1.65vw, 1.55rem);
+  line-height: 1.1;
+}
+
+.motion-lab__process-terms > span {
+  position: relative;
+  display: block;
+  min-width: 0;
+  transform: translateY(10px);
+}
+
+.motion-lab__theme-label {
+  position: absolute;
+}
+
+.motion-lab__training-terms {
+  position: absolute;
+  top: 31%;
+  left: clamp(1.5rem, 4vw, 4.5rem);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem 1.5rem;
+  width: min(30rem, 37vw);
+}
+
+.motion-lab__technical-term {
+  position: relative;
+  display: grid;
+  gap: 0.18rem;
+  min-width: 0;
+  color: rgba(230, 237, 242, 0.96);
+  line-height: 1;
+}
+
+.motion-lab__technical-term strong {
+  font-size: clamp(1.25rem, 1.65vw, 1.55rem);
+  font-weight: 400;
+}
+
+.motion-lab__technical-term small {
+  color: rgba(207, 218, 226, 0.62);
+  font-size: clamp(0.82rem, 1vw, 0.95rem);
+  letter-spacing: 0.045em;
+}
+
+.motion-lab__theme-label {
+  font-size: clamp(0.95rem, 1.15vw, 1.12rem);
+  white-space: nowrap;
+  transform: translate(-50%, 10px);
+}
+.motion-lab__theme-label--owl { top: 36%; left: 24.5%; }
+.motion-lab__theme-label--snake { top: 36%; left: 37.5%; }
+.motion-lab__theme-label--rose { top: 36%; left: 50%; }
+.motion-lab__theme-label--crown { top: 36%; left: 62.5%; }
+.motion-lab__theme-label--star { top: 36%; left: 75.5%; }
+
+.motion-lab__retrieval-terms {
+  position: absolute;
+  top: 66%;
+  left: 50%;
+  display: flex;
+  gap: clamp(0.9rem, 2vw, 2.2rem);
+  transform: translate(-50%, 10px);
+  white-space: nowrap;
+}
+
+.motion-lab__generation-terms {
+  position: absolute;
+  top: 69%;
+  right: 9vw;
+  left: 9vw;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem 1.35rem;
+  width: auto;
+  transform: translateY(10px);
+  color: rgba(221, 232, 239, 0.94);
+  font-size: clamp(1.15rem, 1.55vw, 1.5rem);
+  line-height: 1.15;
+  text-align: center;
+}
+
+.motion-lab__generation-terms span:not(:last-child)::after {
+  content: '·';
+  position: relative;
+  left: 0.68rem;
+  color: rgba(221, 232, 239, 0.42);
+}
+
+.motion-lab__loading,
+.motion-lab__model-error {
+  position: absolute;
+  right: 1.5rem;
+  bottom: 4rem;
+  z-index: 4;
+  margin: 0;
+  color: rgba(240, 238, 233, 0.72);
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+}
+
+.motion-lab__loading {
+  right: auto;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.motion-lab__model-error { color: #ff9dbd; }
+
+.motion-lab__scrubber {
+  position: absolute;
+  right: clamp(1rem, 3vw, 2.5rem);
+  bottom: clamp(0.9rem, 2.5vh, 1.65rem);
+  left: clamp(1rem, 3vw, 2.5rem);
+  z-index: 4;
+  display: grid;
+  grid-template-columns: auto minmax(8rem, 1fr) 2.8rem minmax(4rem, auto) minmax(9rem, auto);
+  gap: 0.7rem;
+  align-items: center;
+  color: rgba(240, 238, 233, 0.55);
+  font-family: 'VT323', monospace;
+  font-size: 0.88rem;
+  letter-spacing: 0.045em;
+}
+
+.motion-lab__scrubber label { white-space: nowrap; }
+
+.motion-lab__scrubber input {
+  width: 100%;
+  height: 1rem;
+  margin: 0;
+  padding: 0;
+  appearance: none;
+  cursor: ew-resize;
+  background: transparent;
+}
+
+.motion-lab__scrubber input::-webkit-slider-runnable-track {
+  height: 1px;
+  background: rgba(240, 238, 233, 0.28);
+}
+
+.motion-lab__scrubber input::-webkit-slider-thumb {
+  width: 7px;
+  height: 7px;
+  margin-top: -3px;
+  appearance: none;
+  border: 0;
+  border-radius: 50%;
+  background: #f0eee9;
+}
+
+.motion-lab__scrubber input:focus-visible {
+  outline: 1px solid #f0eee9;
+  outline-offset: 0.35rem;
+}
+
+.motion-lab__marker,
+.motion-lab__chapter-marker { text-align: right; }
+
+.motion-lab-fallback {
+  display: grid;
+  place-content: center;
+  padding: 2rem;
+}
+
+.motion-lab-fallback p {
+  margin: 0 0 0.75rem;
+  color: rgba(240, 238, 233, 0.65);
+  font-size: 0.8rem;
+}
+
+.motion-lab-fallback h1 {
+  max-width: 16ch;
+  margin: 0;
+  font-size: clamp(2rem, 7vw, 5rem);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 0.92;
+}
+
+@media (max-width: 700px) {
+  .motion-lab { min-height: 1800svh; }
+  .motion-lab__chapters {
+    top: max(1.75rem, env(safe-area-inset-top));
+    right: 1.15rem;
+    left: 1.15rem;
+    width: auto;
+    text-align: center;
+  }
+  .motion-lab__chapter p { max-width: 34ch; margin-right: auto; margin-left: auto; font-size: 1.02rem; line-height: 1.45; }
+  .motion-lab__chapter[data-motion-chapter='clean'],
+  .motion-lab__chapter[data-motion-chapter='training'] { width: 100%; }
+  .motion-lab__chapter[data-motion-chapter='clean'] p,
+  .motion-lab__chapter[data-motion-chapter='training'] p { max-width: 32ch; font-size: 1.08rem; line-height: 1.42; }
+  .motion-lab__temporary-text { font-size: clamp(0.95rem, 4.5vw, 1.15rem); }
+  .motion-lab__process-terms { top: 26%; right: 1.25rem; left: 1.25rem; grid-template-columns: repeat(3, minmax(0, 1fr)); width: auto; gap: 0.35rem 0.75rem; font-size: 1rem; text-align: center; }
+  .motion-lab__training-terms { top: 25%; right: 1.25rem; left: 1.25rem; width: auto; gap: 0.55rem 1rem; text-align: left; }
+  .motion-lab__technical-term strong { font-size: 1.08rem; }
+  .motion-lab__technical-term small { font-size: 0.72rem; }
+  .motion-lab__theme-label { font-size: 0.78rem; }
+  .motion-lab__theme-label--owl { top: 38.5%; left: 4%; }
+  .motion-lab__theme-label--snake { top: 38.5%; left: 37%; }
+  .motion-lab__theme-label--rose { top: 38.5%; left: 70%; }
+  .motion-lab__theme-label--crown { top: 47.2%; left: 18%; }
+  .motion-lab__theme-label--star { top: 47.2%; left: 55%; }
+  .motion-lab__retrieval-terms { top: 68%; flex-wrap: wrap; justify-content: center; width: 90%; white-space: normal; }
+  .motion-lab__generation-terms { top: 72%; right: 5%; left: 5%; width: auto; gap: 0.35rem 0.9rem; font-size: 1rem; }
+  .motion-lab__scrubber {
+    grid-template-columns: auto 1fr 2.4rem auto;
+    font-size: 0.55rem;
+  }
+  .motion-lab__marker { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-lab { min-height: 100svh; }
+  .motion-lab__chapter { transition: none !important; }
+}
