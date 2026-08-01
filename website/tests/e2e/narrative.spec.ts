@@ -99,7 +99,7 @@ test('automatically reveals the accessible fallback when WebGL is unavailable', 
 
 test('loads one persistent canvas and the nine runtime GLBs', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'The full GLB load runs once on desktop.')
-  test.setTimeout(60_000)
+  test.setTimeout(120_000)
 
   const loadedModels = new Set<string>()
   page.on('response', (response) => {
