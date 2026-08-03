@@ -105,7 +105,9 @@ test('automatically reveals the accessible fallback when WebGL is unavailable', 
 
 test('loads one persistent canvas and the nine runtime GLBs', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'The full GLB load runs once on desktop.')
-  test.setTimeout(120_000)
+  // Loading and exercising all nine compressed GLBs can exceed two minutes on
+  // the shared GitHub Pages runner even though the scene is already interactive.
+  test.setTimeout(300_000)
 
   const loadedModels = new Set<string>()
   page.on('response', (response) => {
