@@ -2,6 +2,7 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import { GeneratedReceipts } from './components/GeneratedReceipts'
 import { supportsWebGL } from './lib/webgl'
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
@@ -140,8 +141,10 @@ function IntroSequence({ onInstallationAccessibleChange, onIdleActiveChange }: I
         </section>
         <section className="home-intro-panel home-intro-panel--team" aria-label="Project team">
           <p ref={teamNamesRef} className="home-intro-team-names">
-            <span>Maria Naqvi · Daria Cotocu ·</span>{' '}
-            <span>Muhammad Ayan Achakzai · Harshada Pathare</span>
+            <span>Maria Naqvi</span>
+            <span>Daria Cotocu</span>
+            <span>Muhammad Ayan Achakzai</span>
+            <span>Harshada Pathare</span>
           </p>
           <p ref={teamCueRef} className="home-intro-cue">SCROLL TO ENTER THE INSTALLATION</p>
         </section>
@@ -151,6 +154,9 @@ function IntroSequence({ onInstallationAccessibleChange, onIdleActiveChange }: I
 }
 
 export function App() {
+  const experienceRef = useRef<HTMLElement>(null)
+  const workflowRef = useRef<HTMLDivElement>(null)
+  const receiptsRef = useRef<HTMLElement>(null)
   const [webglStatus, setWebglStatus] = useState<'checking' | 'ready' | 'failed'>('checking')
   const [idleActive, setIdleActive] = useState(false)
   const [installationAccessible, setInstallationAccessible] = useState(false)
@@ -165,14 +171,37 @@ export function App() {
     setWebglStatus(supportsWebGL() ? 'ready' : 'failed')
   }, [])
 
+  useGSAP(() => {
+    const workflow = workflowRef.current
+    const receipts = receiptsRef.current
+    const receiptInner = receipts?.querySelector<HTMLElement>('.generated-receipts__inner')
+    if (!workflow || !receipts || !receiptInner) return
+
+    const handoff = gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: {
+        id: 'home-receipt-handoff',
+        trigger: receipts,
+        start: 'top bottom',
+        end: 'top 32%',
+        scrub: true,
+        invalidateOnRefresh: true,
+      },
+    })
+    handoff
+      .fromTo(receiptInner, { autoAlpha: 0, y: 64 }, { autoAlpha: 1, y: 0, duration: 0.72 }, 0.12)
+      .to(workflow, { autoAlpha: 0, duration: 0.88 }, 0)
+  }, { scope: experienceRef })
+
   return (
-    <main className="home-experience">
+    <main ref={experienceRef} className="home-experience">
       <IntroSequence
         onIdleActiveChange={setIdleActive}
         onInstallationAccessibleChange={setInstallationAccessible}
       />
 
       <div
+        ref={workflowRef}
         className="home-workflow-layer"
         data-idle-active={idleActive ? 'true' : 'false'}
         data-ready={workflowReady ? 'true' : 'false'}
@@ -188,6 +217,7 @@ export function App() {
             {webglStatus === 'ready' && (
               <MotionLabExperience
                 embedded
+                mainExperience
                 deferOpeningToIntro
                 renderActive={idleActive}
                 onReady={handleWorkflowReady}
@@ -197,6 +227,7 @@ export function App() {
           </Suspense>
         )}
       </div>
+      <GeneratedReceipts sectionRef={receiptsRef} />
     </main>
   )
 }

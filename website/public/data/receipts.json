@@ -1,6 +1,6 @@
 {
   "project": "Found in Translation",
-  "receiptCount": 14,
+  "receiptCount": 19,
   "receipts": [
     {
       "id": "20260610_133809",
@@ -292,6 +292,121 @@
       },
       "story": "Long ago, in a quiet village nestled between hills and forests, there lived two sisters—Lina and Mara. Lina was kind-hearted and worked hard, while Mara was greedy and always wanted more than she had. One day, Lina found a golden seed in the forest. She planted it with care and watered it every day. Mara, hearing of the golden seed, sneaked into Lina’s garden and tried to steal it. But when she planted the golden seed in her own plot, nothing grew. She tried everything—fertilizer, magic spells, even shouting at the soil—but still nothing. Meanwhile, Lina’s golden seed bloomed into a tree that bore fruit so sweet and shiny it dazzled the whole village. People came from far and wide to taste its magic. Lina shared her fruit with those in need, and the village grew richer and happier. Mara, jealous and angry, tried to take Lina’s tree. But the golden fruit only grew for those who gave without expecting anything in return. Mara, full of greed, never received a single golden fruit. One day, a wise old man told the village that the tree would only give its gift to those who were kind. Lina had always been kind, and so the tree gave her more fruit than she could carry. Mara, still greedy, never learned to give. And so the golden tree always gave its gifts to Lina, and the village lived in peace and prosperity.",
       "wordCount": 241
+    },
+    {
+      "id": "20260730_152434",
+      "sourceFile": "story_20260730_152434.txt",
+      "timestamp": "2026-07-30T15:24:00",
+      "dateLabel": "2026-07-30 15:24",
+      "mode": "remix",
+      "objectLabel": "pink rose + blue star",
+      "objects": [
+        "pink rose",
+        "blue star"
+      ],
+      "themeLabel": "Love + Mysticism",
+      "themes": [
+        "Love",
+        "Mysticism"
+      ],
+      "culturalDna": {
+        "Europe": 50,
+        "South Asia": 25,
+        "Latin America": 25
+      },
+      "culturalDnaLabel": "Europe 50% - South Asia 25% - Latin America 25%",
+      "story": "Once upon a time, in a land where magic ran wild as wind through the hills, there lived a young woman named Lila who could speak to animals. Every morning she would sit beneath an ancient tree and listen to their tales of love, loss, and longing. The birds told her how they sang for their lost mates; the wolves shared stories of great beasts that had vanished into the sky; and the ants spoke of a queen so wise that she ruled with heart, not might.\n\nOne day, as Lila listened to the murmuring wind in the branches, a fox approached and whispered, “I seek a lover who can listen without judging.” She told him how he could find her in a cave deep within the mountains, where only those pure of heart would be allowed. The fox went off, and so did the birds, the wolves, and even the ants.\n\nWhen they returned weeks later, Lila asked them all, “Did you find her?” They nodded, eyes shining with wonder. “She is a mystic,” said the fox, “and she sings songs that change hearts.” That night, as stars danced over the hills, Lila sang to the moon and felt love bloom in her soul like fire in the wind.\n\nAnd so it was: through magic and music, love found its way—and so did mysticism.",
+      "wordCount": 226
+    },
+    {
+      "id": "20260730_152832",
+      "sourceFile": "story_20260730_152832.txt",
+      "timestamp": "2026-07-30T15:28:00",
+      "dateLabel": "2026-07-30 15:28",
+      "mode": "single",
+      "objectLabel": "blue star",
+      "objects": [
+        "blue star"
+      ],
+      "themeLabel": "Mysticism",
+      "themes": [
+        "Mysticism"
+      ],
+      "culturalDna": {
+        "Europe": 100
+      },
+      "culturalDnaLabel": "Europe 100%",
+      "story": "Long ago, in a land of mist and mountain, there lived a hermit who walked the earth seeking wisdom. He was not like other men—he spoke with birds, listened to trees, and learned from the stars. One day, he heard a voice that said: “Mystic, mystic! Come forth from your cave and see the world.”\n\nHe followed the sound until he found himself in a forest where no man had ever walked. There, he saw an ancient tree with golden leaves, and beneath it sat a woman with hair like fire, holding a bird in her lap.\n\nThe hermit asked, “Who are you? And why do you guard this bird?”\n\nShe answered gently, “I am the keeper of secrets. This bird sings only to those who understand silence.”\n\nThe hermit bowed his head and said, “Then I will listen.” The woman smiled and released the bird. It flew away into the sky, leaving behind a feather that burned like sunlight.\n\nThe hermit took the feather and hid it deep in his heart, for he knew its power was not in sight, but in knowing how to keep it still. And so, he lived long and wisely, never seeking what lay beyond understanding.",
+      "wordCount": 203
+    },
+    {
+      "id": "20260730_152934",
+      "sourceFile": "story_20260730_152934.txt",
+      "timestamp": "2026-07-30T15:29:00",
+      "dateLabel": "2026-07-30 15:29",
+      "mode": "single",
+      "objectLabel": "purple owl",
+      "objects": [
+        "purple owl"
+      ],
+      "themeLabel": "Wisdom",
+      "themes": [
+        "Wisdom"
+      ],
+      "culturalDna": {
+        "Europe": 67,
+        "South Asia": 33
+      },
+      "culturalDnaLabel": "Europe 67% - South Asia 33%",
+      "story": "Long ago in a village nestled between the mountains and rivers, there lived an old woman named Sona. She was known for her wisdom, though few knew how she came by it.\n\nOne day, as she gathered herbs in the forest, she heard a voice call out: “Sona! Come here!” Startled, she followed the sound to a small clearing where a fox sat on a rock. It asked her, “What is wisdom?” Sona smiled and said, “Wisdom is knowing when to speak and when to be silent.” The fox nodded and said, “Tell me more.” She continued, “Wisdom is listening with your heart, not just your ears.” As she spoke, the fox grew smaller and smaller until it was no bigger than a mouse. It whispered, “Thank you for sharing your wisdom,” then vanished.\n\nSona returned home, happy to have shared her knowledge with a creature of the wild. From that day forward, she taught her grandchildren: “Wisdom is not in what we know, but in how we use it.” And so, the old woman’s words lived on through generations, like the whisper of the fox in the forest.",
+      "wordCount": 189
+    },
+    {
+      "id": "20260730_152301",
+      "sourceFile": "story_20260730_152301.txt",
+      "timestamp": "2026-07-30T15:23:00",
+      "dateLabel": "2026-07-30 15:23",
+      "mode": "single",
+      "objectLabel": "yellow crown",
+      "objects": [
+        "yellow crown"
+      ],
+      "themeLabel": "Power",
+      "themes": [
+        "Power"
+      ],
+      "culturalDna": {
+        "Europe": 67,
+        "Sub-Saharan Africa": 33
+      },
+      "culturalDnaLabel": "Europe 67% - Sub-Saharan Africa 33%",
+      "story": "Long ago, a poor farmer lived with his wife by the edge of an ancient forest. One day, while tending their crops, the wife found a golden egg hidden beneath the roots of an old tree. She brought it home and gave it to her husband, who cracked it open—only to find inside not gold but a tiny serpent.\n\nThe farmer was frightened, yet he wrapped the creature in soft cloth and placed it on his lap as if it were a precious jewel. The serpent grew with each passing day, until one morning it stretched its body across their table and spoke: “I am power, and whoever holds me becomes mighty.”\n\nThe farmer laughed at the serpent’s boast and ignored its words.\n\nBut soon he found himself in trouble. A great drought came to the land, and no rain would fall for many months. His crops withered, his cattle died of thirst, and hunger gnawed at the edges of his mind. One day he asked the serpent if it could help him—perhaps even grant a single drop of rain.\n\nThe serpent laughed. “You are weak. You do not understand power.” And it told him that true strength came from within, in wisdom and courage.\n\nThe farmer thought for a while, then returned to his fields with renewed purpose. He worked hard, prayed to the gods for rain, and shared what little he had with others in need. Slowly, clouds gathered on the horizon, and at last, rain fell. The serpent disappeared that night, leaving only one word behind: “Power is not a thing you can own—it is something you must grow.”",
+      "wordCount": 275
+    },
+    {
+      "id": "20260730_152624",
+      "sourceFile": "story_20260730_152624.txt",
+      "timestamp": "2026-07-30T15:26:00",
+      "dateLabel": "2026-07-30 15:26",
+      "mode": "remix",
+      "objectLabel": "green snake + blue star",
+      "objects": [
+        "green snake",
+        "blue star"
+      ],
+      "themeLabel": "Greed + Mysticism",
+      "themes": [
+        "Greed",
+        "Mysticism"
+      ],
+      "culturalDna": {
+        "Europe": 50,
+        "Central & East Asia": 25,
+        "Middle East & North Africa": 25
+      },
+      "culturalDnaLabel": "Europe 50% - Central & East Asia 25% - Middle East & North Africa 25%",
+      "story": "Once upon a time, in a poor village nestled between the snow-capped peaks of the East, there lived a miserly farmer named Bari. He owned a small plot of land and a few goats, yet he never stopped dreaming of wealth. Every night, as he lay awake by his smoldering fire, he would whisper to himself: “I must grow rich! I must grow rich!”\n\nOne day, while tending his goats, Bari stumbled upon a cave hidden in the rocks. Inside, he found an ancient stone bowl filled with gold dust and a single red feather. A voice whispered from the shadows: “This is no ordinary feather; it holds the power of mysticism. If you place it on your head before sleep, visions shall guide you.”\n\nBari was overjoyed. That night, he placed the feather upon his head and fell asleep. In his dreams, a glowing figure appeared, saying: “To become rich, Bari, you must give freely. Wealth is not in hoarding but in sharing.” The vision vanished, leaving him with the feather and an unsettling emptiness in his heart.\n\nThe next morning, Bari took the feather to the village temple. There, he asked a priest for advice on how to use it. “Place the feather on your head before sleep,” said the priest, “and you shall see what is meant.”  \n\nBari obeyed, but instead of visions of wealth, he saw only his own greed and its consequences. The feather had shown him that true riches lie not in gold, but in wisdom and generosity.",
+      "wordCount": 254
     }
   ]
 }

@@ -22,9 +22,19 @@ export interface ReceiptRecord {
   readonly themeLabel: string
   readonly themes: readonly Theme[]
   readonly culturalDna: Readonly<Record<string, number>>
+  readonly culturalDnaLabel?: string
+  readonly dateLabel?: string
   readonly story: string
   readonly wordCount: number
 }
+
+export const GENERATED_RECEIPT_IDS = [
+  '20260730_152434',
+  '20260730_152832',
+  '20260730_152934',
+  '20260730_152301',
+  '20260730_152624',
+] as const
 
 export interface ReceiptArchive {
   readonly project: 'Found in Translation'
@@ -70,6 +80,12 @@ function parseReceipt(value: unknown, index: number): ReceiptRecord {
   assert(typeof record.objectLabel === 'string' && record.objectLabel === objects.join(' + '), `${record.id} has an invalid objectLabel`)
   assert(typeof record.themeLabel === 'string' && record.themeLabel === themes.join(' + '), `${record.id} has an invalid themeLabel`)
   assert(isObject(record.culturalDna) && Object.keys(record.culturalDna).length > 0, `${record.id} has no Cultural DNA`)
+  if (record.culturalDnaLabel !== undefined) {
+    assert(typeof record.culturalDnaLabel === 'string' && record.culturalDnaLabel.length > 0, `${record.id} has an invalid Cultural DNA label`)
+  }
+  if (record.dateLabel !== undefined) {
+    assert(typeof record.dateLabel === 'string' && record.dateLabel.length > 0, `${record.id} has an invalid date label`)
+  }
 
   const dnaValues = Object.values(record.culturalDna)
   assert(dnaValues.every((amount) => typeof amount === 'number' && amount >= 0), `${record.id} has invalid Cultural DNA values`)

@@ -56,6 +56,7 @@ function MotionFallback() {
 
 interface MotionLabExperienceProps {
   readonly embedded?: boolean
+  readonly mainExperience?: boolean
   readonly deferOpeningToIntro?: boolean
   readonly forceReducedMotion?: boolean
   readonly renderActive?: boolean
@@ -63,7 +64,7 @@ interface MotionLabExperienceProps {
   readonly onContextFailure?: () => void
 }
 
-export function MotionLabExperience({ embedded = false, deferOpeningToIntro = false, forceReducedMotion = false, renderActive = true, onReady, onContextFailure }: MotionLabExperienceProps) {
+export function MotionLabExperience({ embedded = false, mainExperience = false, deferOpeningToIntro = false, forceReducedMotion = false, renderActive = true, onReady, onContextFailure }: MotionLabExperienceProps) {
   const rootRef = useRef<HTMLElement>(null)
   const timelineRef = useRef<Timeline | null>(null)
   const triggerRef = useRef<ScrollTrigger | null>(null)
@@ -204,7 +205,7 @@ export function MotionLabExperience({ embedded = false, deferOpeningToIntro = fa
   }, { dependencies: [timeline, reducedMotion, seek, syncInterface, deferOpeningToIntro], scope: rootRef, revertOnUpdate: true })
 
   const stage = <div className="motion-lab__stage-shell">
-    <MotionLabStage renderActive={renderActive} reducedMotion={reducedMotion} onContextFailure={onContextFailure ?? (() => undefined)} onTimelineReady={onTimelineReady} statusRootRef={statusRootRef} textRootRef={textRootRef} />
+    <MotionLabStage mainExperience={mainExperience} renderActive={renderActive} reducedMotion={reducedMotion} onContextFailure={onContextFailure ?? (() => undefined)} onTimelineReady={onTimelineReady} statusRootRef={statusRootRef} textRootRef={textRootRef} />
     <MotionLabLoadStatus />
     <div ref={statusRootRef} className="motion-lab__chapters">
       {MOTION_LAB_CHAPTERS.map((chapter) => <article key={chapter.id} data-motion-chapter={chapter.id} className="motion-lab__chapter">
@@ -244,7 +245,7 @@ export function MotionLabExperience({ embedded = false, deferOpeningToIntro = fa
     </div>}
   </div>
 
-  if (embedded) return <section id="workflow" className="motion-lab motion-lab--embedded" ref={rootRef} aria-label="Found in Translation animated workflow">{stage}</section>
+  if (embedded) return <section id="workflow" className={`motion-lab motion-lab--embedded${mainExperience ? ' motion-lab--main' : ''}`} ref={rootRef} aria-label="Found in Translation animated workflow">{stage}</section>
   return <main className="motion-lab" ref={rootRef}>
     {stage}
   </main>
