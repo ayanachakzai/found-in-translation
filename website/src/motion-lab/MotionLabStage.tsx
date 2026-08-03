@@ -36,6 +36,7 @@ type ModelPose = { readonly position: VectorTuple; readonly rotation: VectorTupl
 type ScenePose = Record<MotionLabModelId, ModelPose>
 
 interface MotionLabStageProps {
+  readonly mainExperience: boolean
   readonly renderActive: boolean
   readonly reducedMotion: boolean
   readonly onContextFailure: () => void
@@ -111,6 +112,22 @@ const FOCUS_COLORS = {
 
 const MODEL_IDS: readonly MotionLabModelId[] = ['old-book', 'owl', 'snake', 'rose', 'crown', 'star', 'webcam', 'receipt-printer', 'arduino']
 
+const MOBILE_MAIN_STAGE = {
+  camera: [0, 0.18, 12.85] as VectorTuple,
+  target: [0, -0.08, -0.35] as VectorTuple,
+  fov: 39,
+  printerCamera: [0, 0.08, 13.25] as VectorTuple,
+  printerTarget: [0, -0.42, -0.35] as VectorTuple,
+  idleStrength: 0.7,
+  safeFrame: {
+    left: -1.3,
+    right: 1.3,
+    top: -0.02,
+    bottom: -2.05,
+    maxScale: 0.92,
+  },
+} as const
+
 function tuple(value: VectorTuple): [number, number, number] {
   return [value[0], value[1], value[2]]
 }
@@ -133,10 +150,134 @@ function isMesh(object: THREE.Object3D): object is THREE.Mesh {
   return (object as THREE.Mesh).isMesh
 }
 
-function createScenePoses(compact: boolean): Record<MotionLabChapterId, ScenePose> {
+function createScenePoses(compact: boolean, mainExperience = false): Record<MotionLabChapterId, ScenePose> {
   const root = (position: VectorTuple, scale: number, rotation: VectorTuple = [0, 0, 0]): ModelPose => ({ position, scale, rotation })
   const offRight = root([compact ? 5.8 : 8.8, 0, -3.4], 0.55)
   const offLeft = root([compact ? -5.8 : -8.8, 0, -3.4], 0.55)
+
+  if (compact && mainExperience) {
+    const mobileOffRight = root([5.2, -0.4, -3.2], 0.5)
+    const mobileOffLeft = root([-5.2, -0.4, -3.2], 0.5)
+    const fitMobilePose = (pose: ScenePose): ScenePose => Object.fromEntries(MODEL_IDS.map((id) => {
+      const model = pose[id]
+      if (Math.abs(model.position[0]) > 4) return [id, model]
+      return [id, {
+        ...model,
+        position: [
+          THREE.MathUtils.clamp(model.position[0], MOBILE_MAIN_STAGE.safeFrame.left, MOBILE_MAIN_STAGE.safeFrame.right),
+          THREE.MathUtils.clamp(model.position[1], MOBILE_MAIN_STAGE.safeFrame.bottom, MOBILE_MAIN_STAGE.safeFrame.top),
+          model.position[2],
+        ] as VectorTuple,
+        scale: Math.min(model.scale, MOBILE_MAIN_STAGE.safeFrame.maxScale),
+      }]
+    })) as ScenePose
+    const archive: ScenePose = {
+      'old-book': root([0, -1.72, -0.42], 0.62, [0.04, 0.035, -0.025]),
+      owl: root([-1.14, -0.18, -0.62], 0.59),
+      snake: root([-1.2, -1.02, -0.18], 0.54),
+      rose: root([0, -0.06, -0.68], 0.58),
+      crown: root([1.12, -0.2, -0.64], 0.61),
+      star: root([1.18, -1.02, -0.16], 0.66),
+      webcam: mobileOffRight,
+      'receipt-printer': mobileOffRight,
+      arduino: mobileOffRight,
+    }
+    const training: ScenePose = {
+      ...archive,
+      'old-book': root([0.04, -1.52, 0.02], 0.63, [0.06, 0.045, -0.02]),
+      owl: root([-1.25, -0.32, -1.55], 0.4),
+      snake: root([-1.25, -1.02, -1.42], 0.37),
+      rose: root([-0.42, -0.28, -1.5], 0.38),
+      crown: root([0.48, -0.3, -1.5], 0.4),
+      star: root([1.23, -0.74, -1.44], 0.43),
+    }
+    const themes: ScenePose = {
+      'old-book': root([0, -1.58, -1.55], 0.44),
+      owl: root([-1.12, -0.04, -0.28], 0.66),
+      snake: root([0, -0.04, -0.25], 0.64),
+      rose: root([1.12, -0.04, -0.28], 0.64),
+      crown: root([-0.68, -0.98, -0.18], 0.69),
+      star: root([0.72, -0.98, -0.16], 0.73),
+      webcam: mobileOffRight,
+      'receipt-printer': mobileOffRight,
+      arduino: mobileOffRight,
+    }
+    const selection: ScenePose = {
+      'old-book': mobileOffLeft,
+      owl: mobileOffLeft,
+      snake: mobileOffLeft,
+      crown: mobileOffLeft,
+      star: root([-0.92, -0.55, 0.32], 0.9),
+      rose: root([-0.92, -1.5, 0.2], 0.82),
+      webcam: root([0.98, -1.28, -0.66], 0.66),
+      'receipt-printer': mobileOffRight,
+      arduino: mobileOffRight,
+    }
+    const lens: VectorTuple = [-0.43, -0.9, 0.92]
+    const star: ScenePose = {
+      ...selection,
+      rose: root([-1.18, -0.32, -0.42], 0.54),
+      star: root(lens, 0.9, [0.08, Math.PI * 0.86, -0.1]),
+    }
+    const rose: ScenePose = {
+      ...selection,
+      star: root([-1.2, -0.34, -0.52], 0.5, [0.04, 0.3, -0.05]),
+      rose: root([lens[0], lens[1] - 0.04, lens[2] + 0.08], 0.88, [-0.05, Math.PI * 0.84, 0.08]),
+    }
+    const retrieval: ScenePose = {
+      'old-book': root([0, -1.58, -0.34], 0.6),
+      owl: root([-1.18, -0.5, -2.1], 0.34),
+      snake: root([-1.18, -1.52, -2.1], 0.31),
+      rose: mobileOffLeft,
+      crown: root([1.18, -0.5, -2.1], 0.34),
+      star: mobileOffLeft,
+      webcam: mobileOffRight,
+      'receipt-printer': mobileOffRight,
+      arduino: mobileOffRight,
+    }
+    const generation: ScenePose = {
+      ...retrieval,
+      'old-book': root([0, -0.92, -0.62], 0.64),
+      owl: mobileOffLeft,
+      snake: mobileOffLeft,
+      crown: mobileOffLeft,
+    }
+    const hardware: ScenePose = {
+      'old-book': mobileOffLeft,
+      owl: mobileOffLeft,
+      snake: mobileOffLeft,
+      rose: mobileOffLeft,
+      crown: mobileOffLeft,
+      star: mobileOffLeft,
+      webcam: mobileOffRight,
+      'receipt-printer': root([-0.04, -1.05, -0.34], 0.8),
+      arduino: root([0.9, -1.86, -0.08], 0.48),
+    }
+    const printing: ScenePose = {
+      ...hardware,
+      'receipt-printer': root([-0.08, -1.02, -0.34], 0.8),
+      arduino: root([0.88, -1.88, -0.08], 0.46),
+    }
+    const final: ScenePose = {
+      ...printing,
+      'receipt-printer': root([-0.14, -0.98, -0.34], 0.79),
+      arduino: root([0.9, -1.82, -0.08], 0.48),
+    }
+    return {
+      archive: fitMobilePose(archive),
+      clean: fitMobilePose(archive),
+      training: fitMobilePose(training),
+      themes: fitMobilePose(themes),
+      selection: fitMobilePose(selection),
+      star: fitMobilePose(star),
+      rose: fitMobilePose(rose),
+      retrieval: fitMobilePose(retrieval),
+      generation: fitMobilePose(generation),
+      hardware: fitMobilePose(hardware),
+      printing: fitMobilePose(printing),
+      final: fitMobilePose(final),
+    }
+  }
 
   const archive: ScenePose = compact ? {
     'old-book': root([0, -0.7, -0.35], 0.82, [0.035, 0.03, -0.025]),
@@ -521,12 +662,12 @@ function showTemporary(timeline: Timeline, root: HTMLDivElement | null, name: st
   timeline.to(element, { autoAlpha: 0, y: -6, duration, ease: 'power2.in' }, at + visibleFor)
 }
 
-function receiptSlot(pose: ScenePose): VectorTuple {
+function receiptSlot(pose: ScenePose, mobileMain = false): VectorTuple {
   const printer = pose['receipt-printer'].position
-  return [printer[0], printer[1] - 0.57, 0.78]
+  return [printer[0], printer[1] - (mobileMain ? 0.56 : 0.57), 0.78]
 }
 
-function StageSequence({ reducedMotion, onModelError, onTimelineReady, statusRootRef, textRootRef }: Pick<MotionLabStageProps, 'reducedMotion' | 'onTimelineReady' | 'statusRootRef' | 'textRootRef'> & { readonly onModelError: (asset: ModelAsset, error: Error) => void }) {
+function StageSequence({ mainExperience, reducedMotion, onModelError, onTimelineReady, statusRootRef, textRootRef }: Pick<MotionLabStageProps, 'mainExperience' | 'reducedMotion' | 'onTimelineReady' | 'statusRootRef' | 'textRootRef'> & { readonly onModelError: (asset: ModelAsset, error: Error) => void }) {
   const refs: Record<MotionLabModelId, RefObject<THREE.Group | null>> = {
     'old-book': useRef<THREE.Group>(null),
     owl: useRef<THREE.Group>(null),
@@ -566,15 +707,23 @@ function StageSequence({ reducedMotion, onModelError, onTimelineReady, statusRoo
   const paperGlowRef = useRef<THREE.PointLight>(null)
   const focusShimmerRef = useRef<THREE.SpotLight>(null)
   const floorShimmerRef = useRef<THREE.PointLight>(null)
+  const mobileStageFillRef = useRef<THREE.PointLight>(null)
   const floorPoolRef = useRef<THREE.Mesh>(null)
   const camera = useThree((state) => state.camera)
   const size = useThree((state) => state.size)
   const invalidate = useThree((state) => state.invalidate)
   const compact = size.width < 700
+  const mobileMain = compact && mainExperience
   const receiptTexture = useMemo(createReceiptTexture, [])
   const receiptMaterial = useMemo(() => createReceiptMaterial(receiptTexture), [receiptTexture])
-  const cableCurve = useMemo(() => compact
+  const cableCurve = useMemo(() => mobileMain
     ? new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0.12, -1.5, -0.08),
+      new THREE.Vector3(0.4, -1.8, 0.1),
+      new THREE.Vector3(0.65, -1.72, -0.1),
+      new THREE.Vector3(0.86, -1.62, -0.1),
+    ])
+    : compact ? new THREE.CatmullRomCurve3([
       new THREE.Vector3(0.25, -1.34, -0.08),
       new THREE.Vector3(0.65, -1.7, 0.12),
       new THREE.Vector3(0.8, -1.52, -0.12),
@@ -585,14 +734,14 @@ function StageSequence({ reducedMotion, onModelError, onTimelineReady, statusRoo
       new THREE.Vector3(1.95, -1.76, 0.12),
       new THREE.Vector3(2.62, -1.48, -0.12),
       new THREE.Vector3(3.2, -1.26, -0.1),
-    ]), [compact])
+    ]), [compact, mobileMain])
 
   useFrame(({ clock }) => {
     const elapsed = clock.elapsedTime
     const timelineTime = timelineRuntimeRef.current?.time() ?? 0
     const chapterIndex = Math.min(MOTION_LAB_CHAPTERS.length - 1, Math.max(0, Math.floor(timelineTime / CHAPTER_DURATION)))
     const holdStrength = holdStrengthAt(timelineTime)
-    const motionStrength = reducedMotion ? 0 : 1
+    const motionStrength = reducedMotion ? 0 : mobileMain ? MOBILE_MAIN_STAGE.idleStrength : 1
 
     MODEL_IDS.forEach((id, index) => {
       const idle = idleRefs[id].current
@@ -600,9 +749,11 @@ function StageSequence({ reducedMotion, onModelError, onTimelineReady, statusRoo
       if (!idle || !root || Math.abs(root.position.x) > (compact ? 4.5 : 7)) return
       const motion = IDLE_MOTION[id]
       const slowTime = elapsed * motion.speed + motion.phase + index * 0.013
+      const idleX = Math.sin(slowTime * 0.71) * motion.lateral * motionStrength
+      const idleY = Math.sin(slowTime) * motion.float * motionStrength
       idle.position.set(
-        Math.sin(slowTime * 0.71) * motion.lateral * motionStrength,
-        Math.sin(slowTime) * motion.float * motionStrength,
+        mobileMain ? THREE.MathUtils.clamp(idleX, MOBILE_MAIN_STAGE.safeFrame.left - root.position.x, MOBILE_MAIN_STAGE.safeFrame.right - root.position.x) : idleX,
+        mobileMain ? THREE.MathUtils.clamp(idleY, MOBILE_MAIN_STAGE.safeFrame.bottom - root.position.y, MOBILE_MAIN_STAGE.safeFrame.top - root.position.y) : idleY,
         Math.cos(slowTime * 0.63) * motion.lateral * 0.55 * motionStrength,
       )
       idle.rotation.set(
@@ -660,26 +811,27 @@ function StageSequence({ reducedMotion, onModelError, onTimelineReady, statusRoo
     const starAura = starAuraRef.current
     const roseAura = roseAuraRef.current
     const arduinoLight = arduinoLightRef.current
+    const mobileStageFill = mobileStageFillRef.current
     if (
       Object.values(models).some((model) => !model) || !receipt || !cableMaterial || !archiveKey || !archiveRim ||
       !recognitionKey || !webcamRim || !printerKey || !printerRim || !acknowledgement || !slotLight ||
       !paperGlow || !starAura || !roseAura || !arduinoLight || !(camera instanceof THREE.PerspectiveCamera)
     ) return null
 
-    const poses = createScenePoses(compact)
-    const cameraTarget = new THREE.Vector3(0, -0.08, -0.35)
+    const poses = createScenePoses(compact, mainExperience)
+    const cameraTarget = new THREE.Vector3(...(mobileMain ? MOBILE_MAIN_STAGE.target : [0, -0.08, -0.35] as VectorTuple))
     MODEL_IDS.forEach((id) => {
       const pose = poses.archive[id]
       models[id]!.position.set(...pose.position)
       models[id]!.scale.setScalar(pose.scale)
       models[id]!.quaternion.copy(quaternion(pose.rotation))
     })
-    camera.position.set(0, compact ? 0.25 : 0.32, compact ? 14.6 : 11.7)
-    camera.fov = compact ? 38 : 36
+    camera.position.set(...(mobileMain ? MOBILE_MAIN_STAGE.camera : compact ? [0, 0.25, 14.6] as VectorTuple : [0, 0.32, 11.7] as VectorTuple))
+    camera.fov = mobileMain ? MOBILE_MAIN_STAGE.fov : compact ? 38 : 36
     camera.lookAt(cameraTarget)
     camera.updateProjectionMatrix()
 
-    const firstSlot = receiptSlot(poses.hardware)
+    const firstSlot = receiptSlot(poses.hardware, mobileMain)
     receipt.position.set(...firstSlot)
     receipt.rotation.set(0, 0, 0)
     archiveKey.target.position.set(0, -0.62, -0.35)
@@ -694,6 +846,7 @@ function StageSequence({ reducedMotion, onModelError, onTimelineReady, statusRoo
     feed.value = 0
     curl.value = 0
     gsap.set([starAura, roseAura, recognitionKey, webcamRim, printerKey, printerRim, acknowledgement, slotLight, paperGlow, arduinoLight], { intensity: 0 })
+    if (mobileStageFill) gsap.set(mobileStageFill, { intensity: 2.35 })
     gsap.set(cableMaterial, { opacity: 0 })
     const chapterElements = statusRootRef.current?.querySelectorAll<HTMLElement>('[data-motion-chapter]') ?? []
     const chapterContent = statusRootRef.current?.querySelectorAll<HTMLElement>('.motion-lab__chapter-number, .motion-lab__chapter h1, .motion-lab__chapter p, .motion-lab__chapter small') ?? []
@@ -765,8 +918,8 @@ function StageSequence({ reducedMotion, onModelError, onTimelineReady, statusRoo
       motionPath: {
         path: [
           { x: poses.selection.star.position[0], y: poses.selection.star.position[1] },
-          { x: compact ? -0.8 : -1.45, y: compact ? 1.55 : 1.2 },
-          { x: compact ? -0.12 : -0.25, y: 0.94 },
+          { x: mobileMain ? -0.74 : compact ? -0.8 : -1.45, y: mobileMain ? -0.44 : compact ? 1.55 : 1.2 },
+          { x: mobileMain ? -0.42 : compact ? -0.12 : -0.25, y: mobileMain ? -0.7 : 0.94 },
           { x: poses.star.star.position[0], y: poses.star.star.position[1] },
         ],
         curviness: 1.3,
@@ -782,9 +935,9 @@ function StageSequence({ reducedMotion, onModelError, onTimelineReady, statusRoo
     timeline.to(webcamRim, { intensity: LIGHTING.webcamRim, duration: 18 }, selectionExit)
     timeline.to(archiveKey, { intensity: 1.2, duration: 18 }, selectionExit)
     timeline.to(archiveRim, { intensity: 0.8, duration: 18 }, selectionExit)
-    timeline.to(starAura, { intensity: 2.35, duration: 5, ease: 'power3.out' }, starHold - 3)
-    timeline.to(recognitionKey, { intensity: LIGHTING.recognitionPeak, duration: 3, ease: 'power3.out' }, starHold)
-    timeline.to(webcamRim, { intensity: LIGHTING.webcamPeak, duration: 3, ease: 'power3.out' }, starHold)
+    timeline.to(starAura, { intensity: mobileMain ? 3.2 : 2.35, duration: 5, ease: 'power3.out' }, starHold - 3)
+    timeline.to(recognitionKey, { intensity: mobileMain ? LIGHTING.recognitionPeak * 1.22 : LIGHTING.recognitionPeak, duration: 3, ease: 'power3.out' }, starHold)
+    timeline.to(webcamRim, { intensity: mobileMain ? LIGHTING.webcamPeak * 1.16 : LIGHTING.webcamPeak, duration: 3, ease: 'power3.out' }, starHold)
     timeline.to(acknowledgement, { intensity: LIGHTING.acknowledgement, duration: 3, ease: 'power3.out' }, starHold)
     timeline.to(starAura, { intensity: 0.92, duration: 8, ease: 'power2.inOut' }, starHold + 3)
     timeline.to(recognitionKey, { intensity: LIGHTING.recognitionKey, duration: 8 }, starHold + 3)
@@ -797,7 +950,7 @@ function StageSequence({ reducedMotion, onModelError, onTimelineReady, statusRoo
     timeline.to(models.star!.position, {
       motionPath: { path: [
         { x: poses.star.star.position[0], y: poses.star.star.position[1] },
-        { x: compact ? -0.6 : -0.8, y: 1.4 },
+        { x: mobileMain ? -0.78 : compact ? -0.6 : -0.8, y: mobileMain ? -0.42 : 1.4 },
         { x: poses.rose.star.position[0], y: poses.rose.star.position[1] },
       ], curviness: 1.2 },
       z: poses.rose.star.position[2], duration: roseHold - starExit,
@@ -806,8 +959,8 @@ function StageSequence({ reducedMotion, onModelError, onTimelineReady, statusRoo
     timeline.to(models.rose!.position, {
       motionPath: { path: [
         { x: poses.star.rose.position[0], y: poses.star.rose.position[1] },
-        { x: compact ? -0.45 : -0.7, y: compact ? -0.65 : -1.25 },
-        { x: compact ? 0.05 : 0.05, y: -0.62 },
+        { x: mobileMain ? -1.0 : compact ? -0.45 : -0.7, y: mobileMain ? -0.68 : compact ? -0.65 : -1.25 },
+        { x: mobileMain ? -0.5 : 0.05, y: mobileMain ? -0.92 : -0.62 },
         { x: poses.rose.rose.position[0], y: poses.rose.rose.position[1] },
       ], curviness: 1.42 },
       z: poses.rose.rose.position[2], duration: roseHold - starExit,
@@ -816,9 +969,9 @@ function StageSequence({ reducedMotion, onModelError, onTimelineReady, statusRoo
     timeline.to(models.rose!.quaternion, { x: roseTarget.x, y: roseTarget.y, z: roseTarget.z, w: roseTarget.w, duration: roseHold - starExit, onUpdate: () => models.rose!.quaternion.normalize() }, starExit)
     timeline.to(models.rose!.scale, { x: poses.rose.rose.scale, y: poses.rose.rose.scale, z: poses.rose.rose.scale, duration: roseHold - starExit }, starExit)
     timeline.to(starAura, { intensity: 0, duration: 10 }, starExit)
-    timeline.to(roseAura, { intensity: 2.15, duration: 5, ease: 'power3.out' }, roseHold - 3)
-    timeline.to(recognitionKey, { intensity: LIGHTING.recognitionPeak, duration: 3, ease: 'power3.out' }, roseHold)
-    timeline.to(webcamRim, { intensity: LIGHTING.webcamPeak, duration: 3, ease: 'power3.out' }, roseHold)
+    timeline.to(roseAura, { intensity: mobileMain ? 3.05 : 2.15, duration: 5, ease: 'power3.out' }, roseHold - 3)
+    timeline.to(recognitionKey, { intensity: mobileMain ? LIGHTING.recognitionPeak * 1.22 : LIGHTING.recognitionPeak, duration: 3, ease: 'power3.out' }, roseHold)
+    timeline.to(webcamRim, { intensity: mobileMain ? LIGHTING.webcamPeak * 1.16 : LIGHTING.webcamPeak, duration: 3, ease: 'power3.out' }, roseHold)
     timeline.to(acknowledgement, { intensity: LIGHTING.acknowledgement, duration: 3, ease: 'power3.out' }, roseHold)
     timeline.to(roseAura, { intensity: 0.88, duration: 8, ease: 'power2.inOut' }, roseHold + 3)
     timeline.to(recognitionKey, { intensity: LIGHTING.recognitionKey, duration: 8 }, roseHold + 3)
@@ -840,20 +993,21 @@ function StageSequence({ reducedMotion, onModelError, onTimelineReady, statusRoo
     // Hardware arrives and connects before the receipt exists.
     const generationExit = chapterStart(8) + CHAPTER_EXIT
     const hardwareHold = chapterStart(9) + CHAPTER_ENTER
+    if (mobileStageFill) timeline.to(mobileStageFill, { intensity: 0, duration: hardwareHold - generationExit }, generationExit)
     timeline.to(printerKey, { intensity: LIGHTING.printerKey, duration: hardwareHold - generationExit }, generationExit)
     timeline.to(printerRim, { intensity: LIGHTING.printerRim, duration: hardwareHold - generationExit }, generationExit)
     timeline.to(archiveKey, { intensity: 0.45, duration: hardwareHold - generationExit }, generationExit)
     timeline.to(archiveRim, { intensity: 0.35, duration: hardwareHold - generationExit }, generationExit)
     timeline.to(cableMaterial, { opacity: 0.72, duration: 6, ease: 'power2.out' }, hardwareHold - 8)
     timeline.to(arduinoLight, { intensity: LIGHTING.arduino, duration: 5 }, hardwareHold - 6)
-    const printerTarget = compact ? new THREE.Vector3(-0.15, -0.25, -0.35) : new THREE.Vector3(0.65, -0.22, -0.38)
-    timeline.to(camera.position, { x: compact ? 0 : 0.1, y: compact ? 0.08 : 0.14, z: compact ? 13.2 : 9.8, duration: 40, ease: 'power1.inOut', onUpdate: () => camera.lookAt(cameraTarget) }, generationExit)
+    const printerTarget = mobileMain ? new THREE.Vector3(...MOBILE_MAIN_STAGE.printerTarget) : compact ? new THREE.Vector3(-0.15, -0.25, -0.35) : new THREE.Vector3(0.65, -0.22, -0.38)
+    timeline.to(camera.position, { x: mobileMain ? MOBILE_MAIN_STAGE.printerCamera[0] : compact ? 0 : 0.1, y: mobileMain ? MOBILE_MAIN_STAGE.printerCamera[1] : compact ? 0.08 : 0.14, z: mobileMain ? MOBILE_MAIN_STAGE.printerCamera[2] : compact ? 13.2 : 9.8, duration: 40, ease: 'power1.inOut', onUpdate: () => camera.lookAt(cameraTarget) }, generationExit)
     timeline.to(cameraTarget, { x: printerTarget.x, y: printerTarget.y, z: printerTarget.z, duration: 40, ease: 'power1.inOut', onUpdate: () => camera.lookAt(cameraTarget) }, generationExit)
 
     // Receipt follows the printer's small hardware-to-printing repositioning.
     const hardwareExit = chapterStart(9) + CHAPTER_EXIT
     const printingHold = chapterStart(10) + CHAPTER_ENTER
-    const printingSlot = receiptSlot(poses.printing)
+    const printingSlot = receiptSlot(poses.printing, mobileMain)
     timeline.to(receipt.position, { x: printingSlot[0], y: printingSlot[1], z: printingSlot[2], duration: printingHold - hardwareExit }, hardwareExit)
 
     // Five paced feed stages: header, objects/themes, cultural DNA, story, footer.
@@ -873,7 +1027,7 @@ function StageSequence({ reducedMotion, onModelError, onTimelineReady, statusRoo
 
     const finalEnter = chapterStart(11)
     const finalHold = finalEnter + CHAPTER_ENTER
-    const finalSlot = receiptSlot(poses.final)
+    const finalSlot = receiptSlot(poses.final, mobileMain)
     timeline.to(receipt.position, { x: finalSlot[0], y: finalSlot[1], z: finalSlot[2], duration: finalHold - (chapterStart(10) + CHAPTER_EXIT) }, chapterStart(10) + CHAPTER_EXIT)
     timeline.to(receipt.rotation, { z: -0.025, x: 0.035, duration: finalHold - finalEnter, ease: 'power2.out' }, finalEnter)
     const holdProxy = { value: 0 }
@@ -883,7 +1037,7 @@ function StageSequence({ reducedMotion, onModelError, onTimelineReady, statusRoo
     timeline.progress(reducedMotion ? 1 : 0)
     invalidate()
     return timeline
-  }, [camera, compact, invalidate, receiptMaterial.uniforms, reducedMotion, statusRootRef, textRootRef])
+  }, [camera, compact, invalidate, mainExperience, mobileMain, receiptMaterial.uniforms, reducedMotion, statusRootRef, textRootRef])
 
   useGSAP(() => {
     const timeline = buildTimeline()
@@ -896,7 +1050,7 @@ function StageSequence({ reducedMotion, onModelError, onTimelineReady, statusRoo
     }
   }, { dependencies: [buildTimeline, onTimelineReady], revertOnUpdate: true })
 
-  const initialPoses = createScenePoses(false).archive
+  const initialPoses = createScenePoses(false, mainExperience).archive
   return <>
     <ambientLight color="#d2dbe3" intensity={LIGHTING.fill} />
     <hemisphereLight args={['#a0b4c6', '#101215', LIGHTING.hemisphere]} />
@@ -909,13 +1063,14 @@ function StageSequence({ reducedMotion, onModelError, onTimelineReady, statusRoo
     <spotLight ref={printerRimRef} color="#b9c6d5" intensity={0} position={[4.4, 3.8, -1.2]} angle={0.5} penumbra={0.94} target-position={[0.62, -0.1, -0.4]} />
     <spotLight ref={focusShimmerRef} color="#f0c994" intensity={0} position={[-1.6, 5.8, 4.8]} angle={0.54} penumbra={0.96} target-position={[0, -0.4, -0.35]} />
     <pointLight ref={floorShimmerRef} color="#8fa9bd" intensity={0.2} distance={5.2} decay={2} position={[0, -1.78, 0.7]} />
+    {mobileMain && <pointLight ref={mobileStageFillRef} color="#ced8e2" intensity={2.35} distance={7.2} decay={2} position={[0, -0.72, 4.5]} />}
     <pointLight ref={acknowledgementRef} color="#d9ecff" intensity={0} distance={2.6} decay={2} position={[0.7, 0.32, 1.02]} />
     <pointLight ref={slotLightRef} color="#f2dfbd" intensity={0} distance={2.2} decay={2} position={[0.9, -0.68, 0.94]} />
     <pointLight ref={paperGlowRef} color="#ffc47b" intensity={0} distance={3.1} decay={2} position={[0.9, -1.1, 0.72]} />
     <directionalLight color="#e6edf3" intensity={2.35} position={[-3.5, 5.8, 7.8]} />
     <directionalLight color="#a9bacb" intensity={1.65} position={[5.4, 3.6, 4.2]} />
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.15, -1.2]}>
-      <planeGeometry args={[28, 28]} />
+    {mobileMain ? <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.12, -0.3]}>
+      <planeGeometry args={[7.2, 4.8]} />
       <shaderMaterial
         transparent
         depthWrite={false}
@@ -930,21 +1085,45 @@ function StageSequence({ reducedMotion, onModelError, onTimelineReady, statusRoo
         fragmentShader={`
           varying vec2 vUv;
           void main() {
-            vec2 centred = (vUv - 0.5) * vec2(0.82, 1.0);
-            float falloff = 1.0 - smoothstep(0.08, 0.54, length(centred));
-            gl_FragColor = vec4(vec3(0.055, 0.062, 0.071), falloff * 0.82);
+            vec2 centred = (vUv - 0.5) * vec2(1.0, 1.32);
+            float falloff = 1.0 - smoothstep(0.16, 0.46, length(centred));
+            gl_FragColor = vec4(vec3(0.10, 0.112, 0.126), falloff * 0.16);
           }
         `}
       />
-    </mesh>
-    <mesh ref={floorPoolRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.142, -0.35]} scale={[5.4, 1.35, 1]}>
-      <circleGeometry args={[1, 64]} />
-      <meshBasicMaterial color="#536878" transparent opacity={0.04} depthWrite={false} toneMapped={false} />
-    </mesh>
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.135, -0.4]} scale={[3.3, 0.7, 1]}>
-      <circleGeometry args={[1, 64]} />
-      <meshBasicMaterial color="#070809" transparent opacity={0.18} depthWrite={false} />
-    </mesh>
+    </mesh> : <>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.15, -1.2]}>
+        <planeGeometry args={[28, 28]} />
+        <shaderMaterial
+          transparent
+          depthWrite={false}
+          toneMapped={false}
+          vertexShader={`
+            varying vec2 vUv;
+            void main() {
+              vUv = uv;
+              gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+          `}
+          fragmentShader={`
+            varying vec2 vUv;
+            void main() {
+              vec2 centred = (vUv - 0.5) * vec2(0.82, 1.0);
+              float falloff = 1.0 - smoothstep(0.08, 0.54, length(centred));
+              gl_FragColor = vec4(vec3(0.055, 0.062, 0.071), falloff * 0.82);
+            }
+          `}
+        />
+      </mesh>
+      <mesh ref={floorPoolRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.142, -0.35]} scale={[5.4, 1.35, 1]}>
+        <circleGeometry args={[1, 64]} />
+        <meshBasicMaterial color="#536878" transparent opacity={0.04} depthWrite={false} toneMapped={false} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.135, -0.4]} scale={[3.3, 0.7, 1]}>
+        <circleGeometry args={[1, 64]} />
+        <meshBasicMaterial color="#070809" transparent opacity={0.18} depthWrite={false} />
+      </mesh>
+    </>}
     <Model id="old-book" modelRef={refs['old-book']} idleRef={idleRefs['old-book']} pose={initialPoses['old-book']} displayRotation={[0.6, -0.56, 0.035]} onError={onModelError} />
     <Model id="owl" modelRef={refs.owl} idleRef={idleRefs.owl} pose={initialPoses.owl} onError={onModelError} />
     <Model id="snake" modelRef={refs.snake} idleRef={idleRefs.snake} pose={initialPoses.snake} onError={onModelError} />
@@ -960,7 +1139,7 @@ function StageSequence({ reducedMotion, onModelError, onTimelineReady, statusRoo
     <Model id="arduino" modelRef={refs.arduino} idleRef={idleRefs.arduino} pose={initialPoses.arduino} onError={onModelError}>
       <pointLight ref={arduinoLightRef} color="#91d8a1" intensity={0} distance={1.5} decay={2} position={[0.15, 0.18, 0.45]} />
     </Model>
-    <group ref={receiptRef} position={[0.62, -0.72, 0.78]}>
+    <group ref={receiptRef} position={[0.62, -0.72, 0.78]} scale={mobileMain ? 0.78 : 1}>
       <mesh><planeGeometry args={[1.02, 2.8, 16, 96]} /><primitive object={receiptMaterial} attach="material" /></mesh>
     </group>
     <mesh>
@@ -970,7 +1149,7 @@ function StageSequence({ reducedMotion, onModelError, onTimelineReady, statusRoo
   </>
 }
 
-export function MotionLabStage({ renderActive, reducedMotion, onContextFailure, onTimelineReady, statusRootRef, textRootRef }: MotionLabStageProps) {
+export function MotionLabStage({ mainExperience, renderActive, reducedMotion, onContextFailure, onTimelineReady, statusRootRef, textRootRef }: MotionLabStageProps) {
   const [modelErrors, setModelErrors] = useState<ReadonlyMap<string, string>>(() => new Map())
   const [mobileViewport, setMobileViewport] = useState(() => window.matchMedia('(max-width: 700px)').matches)
   const onModelError = useCallback((asset: ModelAsset, error: Error) => {
@@ -1001,7 +1180,7 @@ export function MotionLabStage({ renderActive, reducedMotion, onContextFailure, 
     >
       <ContextLossListener onContextFailure={onContextFailure} />
       <Suspense fallback={null}>
-        <StageSequence reducedMotion={reducedMotion} onModelError={onModelError} onTimelineReady={onTimelineReady} statusRootRef={statusRootRef} textRootRef={textRootRef} />
+        <StageSequence mainExperience={mainExperience} reducedMotion={reducedMotion} onModelError={onModelError} onTimelineReady={onTimelineReady} statusRootRef={statusRootRef} textRootRef={textRootRef} />
       </Suspense>
     </Canvas>
     {modelErrors.size > 0 && <p className="motion-lab__model-error" role="status">3D fallback active · {[...modelErrors.values()].join(' · ')}</p>}

@@ -367,6 +367,106 @@ html[data-page='motion-lab'] body {
     font-size: 0.55rem;
   }
   .motion-lab__marker { display: none; }
+
+  .motion-lab--main .motion-lab__chapters {
+    top: max(2rem, calc(env(safe-area-inset-top) + 1.4rem));
+    right: 1.65rem;
+    left: 1.65rem;
+    width: auto;
+    max-height: 30svh;
+    text-align: left;
+  }
+
+  .motion-lab--main .motion-lab__chapter-number {
+    margin-bottom: 0.2rem;
+    font-size: 0.95rem;
+  }
+
+  .motion-lab--main .motion-lab__chapter h1 {
+    max-width: 12ch;
+    font-size: clamp(1.65rem, 7.25vw, 1.9rem);
+    line-height: 0.98;
+  }
+
+  .motion-lab--main .motion-lab__chapter p,
+  .motion-lab--main .motion-lab__chapter[data-motion-chapter='clean'] p,
+  .motion-lab--main .motion-lab__chapter[data-motion-chapter='training'] p {
+    max-width: 20rem;
+    margin: 0.58rem 0 0;
+    font-size: clamp(1.03rem, 4.4vw, 1.12rem);
+    line-height: 1.42;
+    text-align: left;
+  }
+
+  .motion-lab--main .motion-lab__chapter small {
+    margin-top: 0.38rem;
+    font-size: 0.98rem;
+  }
+
+  .motion-lab--main .motion-lab__temporary-text {
+    font-size: clamp(1.05rem, 4.8vw, 1.24rem);
+  }
+
+  .motion-lab--main .motion-lab__process-terms {
+    top: 31.5%;
+    right: 1.65rem;
+    left: 1.65rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.35rem 0.75rem;
+    width: auto;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .motion-lab--main .motion-lab__training-terms {
+    top: 32.5%;
+    right: 1.65rem;
+    left: 1.65rem;
+    width: auto;
+    gap: 0.45rem 1rem;
+  }
+
+  .motion-lab--main .motion-lab__technical-term strong { font-size: 1.05rem; }
+  .motion-lab--main .motion-lab__technical-term small { display: none; }
+
+  .motion-lab--main .motion-lab__theme-label {
+    top: 33%;
+    left: 1.65rem;
+    font-size: 0.95rem;
+    letter-spacing: 0.12em;
+    transform: translateY(10px);
+  }
+
+  .motion-lab--main .motion-lab__retrieval-terms {
+    top: 31.5%;
+    right: 1.65rem;
+    left: 1.65rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: auto;
+    gap: 0.42rem 0.9rem;
+    justify-content: start;
+    transform: translateY(10px);
+    font-size: 1.02rem;
+    white-space: normal;
+  }
+
+  .motion-lab--main .motion-lab__generation-terms {
+    top: 32%;
+    right: 1.65rem;
+    left: 1.65rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.36rem 0.85rem;
+    width: auto;
+    font-size: 0.98rem;
+    line-height: 1.05;
+    text-align: left;
+  }
+
+  .motion-lab--main .motion-lab__generation-terms span:not(:last-child)::after {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
