@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">Found in Translation</title>
+  <rect x="3" y="3" width="58" height="58" rx="12" fill="#0c0d0f"/>
+  <path
+    d="M16 9h32v41l-4 5-4-3-4 3-4-3-4 3-4-3-4 3-4-5V9Z"
+    fill="#efe7d5"
+  />
+  <path
+    d="m23 15 2.2 5.8L31 23l-5.8 2.2L23 31l-2.2-5.8L15 23l5.8-2.2L23 15Z"
+    fill="#2f78e8"
+  />
+  <circle cx="41" cy="23" r="7" fill="#d92f82"/>
+  <path d="M31 23h4.5m-2.5-2.5 2.5 2.5-2.5 2.5" fill="none" stroke="#0c0d0f" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"/>
+  <path d="M22 37h20M22 43h14" fill="none" stroke="#0c0d0f" stroke-width="3" stroke-linecap="square"/>
+</svg>
